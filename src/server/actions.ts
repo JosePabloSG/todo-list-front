@@ -10,7 +10,7 @@ export async function postTaskItem(taskItem: TaskItem) {
     body: JSON.stringify(taskItem),
   };
 
-  const res = await fetch("https://localhost:7239/api/Task", options);
+  const res = await fetch("https://localhost:7135/api/Task", options);
   const data = await res.json();
 
   return data;

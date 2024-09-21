@@ -13,7 +13,7 @@ export function TodoListComponent() {
 
   useEffect(() => {
     const connection = new signalr.HubConnectionBuilder()
-      .withUrl("https://localhost:7239/TaskHub")
+      .withUrl("https://localhost:7135/TaskHub")
       .withAutomaticReconnect()
       .build();
 
