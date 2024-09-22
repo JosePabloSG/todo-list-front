@@ -1,46 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import usePostTask from "@/hooks/tasks/usePostTask";
-import * as signalr from "@microsoft/signalr";
+import useGetAllTask from "@/hooks/tasks/useGetAllTask";
+
 
 export function TodoListComponent() {
-  const { register, onSubmit } = usePostTask();
-
-  // Estado para las tareas recibidas en tiempo real
-  const [tasks, setTasks] = useState<{ id: number; description: string }[]>([]);
-
-  useEffect(() => {
-    const connection = new signalr.HubConnectionBuilder()
-      .withUrl("https://localhost:7135/TaskHub")
-      .withAutomaticReconnect()
-      .build();
-
-    connection
-      .start()
-      .then(() => {
-        console.log("Connected to the SignalR hub");
-
-        connection.on(
-          "ReceiveTaskNotification",
-          (taskItem: { id: number; description: string }) => {
-            console.log("New task received:", taskItem);
-
-            // Actualiza el estado con la nueva tarea
-            setTasks((prevTasks) => [...prevTasks, taskItem]);
-          }
-        );
-      })
-      .catch((err) =>
-        console.error("Error while starting SignalR connection: ", err)
-      );
-
-    return () => {
-      connection.stop();
-    };
-  }, []);
-
+  const { register, onSubmit, errors } = usePostTask();
+  const { tasks } = useGetAllTask();
   return (
     <form onSubmit={onSubmit}>
       <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
@@ -64,6 +31,7 @@ export function TodoListComponent() {
               <span>{task.description}</span>
             </li>
           ))}
+          {errors.root && <p className="text-red-500">{errors.root.message}</p>}
         </ul>
       </div>
     </form>
